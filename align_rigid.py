@@ -48,13 +48,14 @@ def test_find_rbm_procrustes():
 
 def main(input_hdf5_file, output_hdf5_file):
     data = h5py.File(input_hdf5_file, 'r')
-    verts = data['verts'].value
-    tris = data['tris'].value
-
+    print(data)
+    verts = data['verts'][()]    
+    tris = data['tris'][()]
+    
     v0 = verts[0]
     verts_new = []
     for i, v in enumerate(verts):
-        print "frame %d/%d" % (i+1, len(verts))
+        print("frame %d/%d" % (i+1, len(verts)))
         M = find_rbm_procrustes(v, v0)
         verts_new.append(transform(v, M))
     verts = np.array(verts_new, np.float32)

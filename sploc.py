@@ -41,8 +41,8 @@ def main(input_animation_file, output_sploc_file, output_animation_file):
         # normalize into -0.5 ... 0.5 box
 
     with h5py.File(input_animation_file, 'r') as f:
-        verts = f['verts'].value.astype(np.float)
-        tris = f['tris'].value
+        verts = f['verts'][()].astype(np.float)
+        tris = f['tris'][()]
 
     F, N, _ = verts.shape
 
@@ -50,7 +50,7 @@ def main(input_animation_file, output_sploc_file, output_animation_file):
         Xmean = verts[0]
     elif rest_shape == "average":
         Xmean = np.mean(verts, axis=0)
-
+    print(tris)
     # prepare geodesic distance computation on the restpose mesh
     compute_geodesic_distance = GeodesicDistanceComputation(Xmean, tris)
 
@@ -64,7 +64,7 @@ def main(input_animation_file, output_sploc_file, output_animation_file):
     # find initial components explaining the residual
     C = []
     W = []
-    for k in xrange(K):
+    for k in range(K):
         # find the vertex explaining the most variance across the residual animation
         magnitude = (R**2).sum(axis=2)
         idx = np.argmax(magnitude.sum(axis=0))
@@ -94,10 +94,10 @@ def main(input_animation_file, output_sploc_file, output_animation_file):
     U = np.zeros((K, N, 3))
 
     # main global optimization
-    for it in xrange(num_iters_max):
+    for it in range(num_iters_max):
         # update weights
         Rflat = R.reshape(F, N*3) # flattened residual
-        for k in xrange(C.shape[0]): # for each component
+        for k in range(C.shape[0]): # for each component
             Ck = C[k].ravel()
             Ck_norm = np.inner(Ck, Ck)
             if Ck_norm <= 1.e-8:
@@ -110,7 +110,7 @@ def main(input_animation_file, output_sploc_file, output_animation_file):
             W[:,k] = project_weight(opt)
             Rflat -= np.outer(W[:,k], Ck)
         # update spatially varying regularization strength
-        for k in xrange(K):
+        for k in range(K):
             ck = C[k]
             # find vertex with biggest displacement in component and compute support map around it
             idx = (ck**2).sum(axis=1).argmax()
@@ -125,7 +125,7 @@ def main(input_animation_file, output_sploc_file, output_animation_file):
         c = np.dot(W.T, X.reshape(X.shape[0], -1))
         solve_prefactored = cho_factor(G + rho * np.eye(G.shape[0]))
         # ADMM iterations
-        for admm_it in xrange(num_admm_iterations):
+        for admm_it in range(num_admm_iterations):
             C = cho_solve(solve_prefactored, c + rho * (Z - U).reshape(c.shape)).reshape(C.shape)
             Z = prox_l1l2(Lambda, C + U, 1. / rho)
             U = U + C - Z
@@ -137,7 +137,7 @@ def main(input_animation_file, output_sploc_file, output_animation_file):
         sparsity = np.sum(Lambda * np.sqrt((C**2).sum(axis=2)))
         e = (R**2).sum() + sparsity
         # TODO convergence check
-        print "iteration %03d, E=%f" % (it, e)
+        print ("iteration %03d, E=%f" % (it, e))
 
     # undo scaling
     C /= pre_scale_factor

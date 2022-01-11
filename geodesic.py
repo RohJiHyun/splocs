@@ -56,7 +56,7 @@ def compute_mesh_laplacian(verts, tris):
     # compute per-vertex area
     vertex_area = np.zeros(len(verts))
     ta3 = triangle_area / 3
-    for i in xrange(tris.shape[1]):
+    for i in range(tris.shape[1]):
         bc = np.bincount(tris[:,i].astype(int), ta3)
         vertex_area[:len(bc)] += bc
     VA = sparse.spdiags(vertex_area, 0, len(verts), len(verts))
@@ -90,7 +90,9 @@ class GeodesicDistanceComputation(object):
         self._unit_normal_cross_e12 = np.cross(unit_normal, e12)
         self._unit_normal_cross_e20 = np.cross(unit_normal, e20)
         # parameters for heat method
-        h = np.mean(map(veclen, [e01, e12, e20]))
+        ss = map(veclen, [e01, e12, e20])
+        h = np.mean(np.array(list(ss)))
+        # h = np.mean(map(veclen, [e01, e12, e20]))
         t = m * h ** 2
         # pre-factorize poisson systems
         Lc, A = compute_mesh_laplacian(verts, tris)

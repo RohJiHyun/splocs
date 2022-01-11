@@ -1,0 +1,6 @@
+**/__pycache__
+data/face-poses
+data/horse-gallop
+data/test
+/tmp
+/.vscode

@@ -9,10 +9,10 @@ from tvtk.common import configure_input, configure_input_data
 def main(hdf5_animation_file):
     weights = None
     with h5py.File(hdf5_animation_file, 'r') as f:
-        verts = f['verts'].value
-        tris = f['tris'].value
+        verts = f['verts'][()]
+        tris = f['tris'][()]
         if 'weights' in f:
-            weights = f['weights'].value
+            weights = f['weights'][()]
 
     pd = tvtk.PolyData(points=verts[0], polys=tris)
     normals = tvtk.PolyDataNormals(splitting=False)

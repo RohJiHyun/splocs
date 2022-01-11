@@ -35,7 +35,8 @@ class Visualization(HasTraits):
         self.pd = tvtk.PolyData(points=Xmean, polys=tris)
         self.normals = tvtk.PolyDataNormals(splitting=False)
         configure_input_data(self.normals, self.pd)
-        mapper = tvtk.PolyDataMapper(immediate_mode_rendering=True)
+        # mapper = tvtk.PolyDataMapper(immediate_mode_rendering=True)
+        mapper = tvtk.PolyDataMapper()
         self.actor = tvtk.Actor(mapper=mapper)
         configure_input(self.actor.mapper, self.normals)
         self.actor.mapper.lookup_table = tvtk.LookupTable(
@@ -44,7 +45,8 @@ class Visualization(HasTraits):
             value_range = (.6, 1.),
         )
         self.scene.add_actor(self.actor)
-        self.timer = Timer(40, self.animate().next)
+        # self.timer = Timer(40, self.animate())
+        self.timer = Timer(40, self.animate().__next__)
 
     def animate(self):
         for i in count():
