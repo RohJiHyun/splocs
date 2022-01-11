@@ -1,6 +1,17 @@
 splocs
 ======
 
+# Information and Contribution.
+```
+        python version updated to 3.9
+        I removed deprecated api and expressions.(h5py's dataset api is dreprecated a lot.)
+
+        add data folder
+```
+
+
+
+
 A reference implementation of "Sparse Localized Deformation Components", a paper accepted for SIGGRAPH Asia 2013.  More information on the paper, including the videos, can be found on the [project page](http://www.drematrix.de/?portfolio=english-sparse-localized-deformation-components&lang=en).
 
 The main algorithm presented in the paper is in "sploc.py"
@@ -14,13 +25,25 @@ To run the code, you will need
  - Python
  - numpy
  - scipy
+ - h5py
 
 For visualizing the components and animations, additionally
  - mayavi2
 
-In Ubuntu, these can be easily installed by
 
-        >>> apt-get install python python-numpy python-scipy mayavi2
+
+In Windows 10, install by calling bat file.
+```
+        >>> install_env.bat
+```
+
+dataset preprocess(obj to ply)
+---
+```
+        python obj2ply.py ./horse-gallop ./face-poses ./prop_dataset
+```
+
+
 
 Usage
 -----
